@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Final Year Form - PeerConnect</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #e0f7fa, #ffffff);
+    }
+    header {
+      background-color: #1976d2;
+      color: white;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    header h1 {
+      font-size: 2.5em;
+    }
+    .form-section, .search-section, .profiles-section {
+      background-color: #ffffff;
+      margin: 30px auto;
+      padding: 25px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 700px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    .form-section {
+      background: url('https://cdn-icons-png.flaticon.com/512/2942/2942346.png') no-repeat right bottom;
+      background-size: 80px;
+    }
+    h2 {
+      color: #1976d2;
+      margin-bottom: 20px;
+    }
+    form {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+    label {
+      font-weight: bold;
+      color: #333;
+    }
+    input, button {
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1em;
+    }
+    input:focus {
+      border-color: #1976d2;
+      outline: none;
+      box-shadow: 0 0 5px rgba(25, 118, 210, 0.5);
+    }
+    button {
+      background-color: #1976d2;
+      color: white;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #0d47a1;
+    }
+    .profile-card {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-top: 10px;
+      border-radius: 8px;
+      background-color: #f1f8e9;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    .profile-card h3 {
+      margin-top: 0;
+      color: #2e7d32;
+    }
+    .search-section input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🎓 Final Year Form</h1>
+    <p>Connect with fellow final-year students!</p>
+  </header>
+
+  <main>
+    <section class="form-section">
+      <h2>📝 Add Your Profile</h2>
+      <form id="profileForm">
+        <label for="name">👤 Name:</label>
+        <input type="text" id="name" placeholder="Your Name" required />
+
+        <label for="branch">🏫 Branch:</label>
+        <input type="text" id="branch" placeholder="Branch" required />
+
+        <label for="project">💡 Project Title:</label>
+        <input type="text" id="project" placeholder="Project Title" required />
+
+        <label for="subject">📘 Subject of Interest:</label>
+        <input type="text" id="subject" placeholder="Subject of Interest" required />
+
+        <label for="help">❓ Help Needed:</label>
+        <input type="text" id="help" placeholder="What help do you need?" required />
+
+        <button type="submit">➕ Add Profile</button>
+      </form>
+    </section>
+
+    <section class="search-section">
+      <h2>🔍 Search Profiles</h2>
+      <input type="text" id="searchInput" placeholder="Search by subject or branch..." />
+    </section>
+
+    <section class="profiles-section">
+      <h2>👥 All Profiles</h2>
+      <div id="profileList"></div>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById("profileForm");
+    const profileList = document.getElementById("profileList");
+    const searchInput = document.getElementById("searchInput");
+
+    let profiles = JSON.parse(localStorage.getItem("profiles")) || [];
+
+    function renderProfiles(data) {
+      profileList.innerHTML = "";
+      if (data.length === 0) {
+        profileList.innerHTML = "<p>No profiles found.</p>";
+        return;
+      }
+      data.forEach((profile, index) => {
+        const div = document.createElement("div");
+        div.className = "profile-card";
+        div.innerHTML = `
+          <h3>👤 ${profile.name}</h3>
+          <p><strong>🏫 Branch:</strong> ${profile.branch}</p>
+          <p><strong>💡 Project:</strong> ${profile.project}</p>
+          <p><strong>📘 Subject:</strong> ${profile.subject}</p>
+          <p><strong>❓ Help Needed:</strong> ${profile.help}</p>
+          <button onclick="alert('Connection Request Sent to ${profile.name}!')">Connect</button>
+        `;
+        profileList.appendChild(div);
+      });
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const newProfile = {
+        name: form.name.value,
+        branch: form.branch.value,
+        project: form.project.value,
+        subject: form.subject.value,
+        help: form.help.value
+      };
+      profiles.push(newProfile);
+      localStorage.setItem("profiles", JSON.stringify(profiles));
+      renderProfiles(profiles);
+      form.reset();
+    });
+
+    searchInput.addEventListener("input", function () {
+      const searchTerm = searchInput.value.toLowerCase();
+      const filtered = profiles.filter(p =>
+        p.subject.toLowerCase().includes(searchTerm) ||
+        p.branch.toLowerCase().includes(searchTerm)
+      );
+      renderProfiles(filtered);
+    });
+
+    renderProfiles(profiles);
+  </script>
+</body>
+</html>
+
+
